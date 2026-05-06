@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enterprise Kiosk Experience</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body oncontextmenu="return false;">
+    <!-- Idle Screen -->
+    <div id="idle-screen" class="screen active">
+        <!-- Cinematic Video Layer -->
+        <video id="idle-video" autoplay loop muted playsinline>
+            <source src="videos/tap.mp4" type="video/mp4">
+        </video>
+        <!-- Luxury Overlays -->
+        <div class="cinematic-vignette"></div>
+        <div class="idle-gradient-overlay"></div>
+        <div class="ambient-particles" id="particles"></div>
+        <!-- Typography -->
+        <div class="idle-content">
+            <h1 class="premium-text">Touch to Begin</h1>
+            <div class="elegant-pulse"></div>
+        </div>
+    </div>
+
+    <!-- Welcome Screen (shows for 2-3 sec after touch) -->
+    <div id="welcome-screen" class="screen hidden">
+        <div class="welcome-bg"></div>
+        <div class="welcome-content">
+            <div class="welcome-icon">
+                <img src="assets/Hagia-Sophia.png" alt="Museum" class="welcome-logo">
+            </div>
+            <h1 class="welcome-title">Welcome to the Museum</h1>
+            <p class="welcome-subtitle">Explore Our World-Class Exhibitions</p>
+            <div class="welcome-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Experience Screen -->
+    <div id="map-screen" class="screen hidden">
+        <div class="map-container" id="map-container">
+            <img src="assets/map.png" class="map-bg" alt="Map Background">
+            <div class="hotspots-layer" id="hotspots-layer">
+                <!-- Hotspots generated via JS -->
+            </div>
+        </div>
+        
+        <!-- Session Timer -->
+        <div class="session-timer-container">
+            <svg class="timer-svg" viewBox="0 0 100 100">
+                <circle class="timer-bg" cx="50" cy="50" r="48"></circle>
+                <circle class="timer-progress" cx="50" cy="50" r="48"></circle>
+            </svg>
+            <div class="timer-text-container">
+                <div class="timer-text" id="timer-text">120</div>
+                <div class="timer-label">SEC</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Player Screen -->
+    <div id="video-screen" class="screen hidden">
+        <div id="video-container">
+            <!-- Videos will be swapped here dynamically -->
+        </div>
+        <div class="video-overlay">
+            <div class="video-controls">
+                <div class="premium-back-btn">
+                    <span class="back-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </span>
+                    <span class="back-text">Return to Map</span>
+                </div>
+            </div>
+            <div class="video-info">
+                <div class="info-glass-panel">
+                    <h2 id="video-title">Location Name</h2>
+                    <p>Live Interactive Feed</p>
+                    <div class="live-indicator">
+                        <span class="dot"></span> LIVE
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Master Transition Layer -->
+    <div id="transition-layer">
+        <div class="transition-blur"></div>
+        <div class="transition-solid"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
