@@ -1,35 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM
     const idleScreen = document.getElementById('idle-screen');
-    const welcomeScreen = document.getElementById('welcome-screen');
+
     const mapScreen = document.getElementById('map-screen');
+    const introScreen = document.getElementById('intro-screen');
+    const introVideo = document.getElementById('intro-video');
     const videoScreen = document.getElementById('video-screen');
     const videoContainer = document.getElementById('video-container');
     const videoTitle = document.getElementById('video-title');
     const videoDesc = document.getElementById('video-desc');
-    const videoEmoji = document.getElementById('video-emoji');
+    const videoIcon = document.getElementById('video-icon');
     const videoProgressBar = document.getElementById('video-progress-bar');
     const hotspotsLayer = document.getElementById('hotspots-layer');
     const timerText = document.getElementById('timer-text');
 
     // State
     let currentScreen = 'idle';
-    let sessionTimer, timeLeft = 120;
-    const SESSION_TIMEOUT = 120;
+    let sessionTimer, timeLeft = 140;
+    const SESSION_TIMEOUT = 140;
 
-    // Each hotspot: unique color, emoji, position (matching reference image)
+    // Each hotspot: unique color, icon, position
     const hotspots = [
-        { id:1, name:"The Grand Dining Hall",    emoji:"🍽️", color:"#ff3d8a", x:20, y:25,  icon:"assets/Hagia-Sophia.png", desc:"Fine dining with panoramic views" },
-        { id:2, name:"Infinity Pool & Spa",      emoji:"🏊", color:"#00e5ff", x:42, y:15,  icon:"assets/unnamed.png",      desc:"Relax in our world-class infinity pool" },
-        { id:3, name:"Luxury Shopping Arcade",   emoji:"🛍️", color:"#ffc107", x:75, y:15,  icon:"assets/Hagia-Sophia.png", desc:"Premium brands and exclusive collections" },
-        { id:4, name:"Entertainment Zone",       emoji:"🎭", color:"#a855f7", x:88, y:45,  icon:"assets/unnamed.png",      desc:"Immersive shows and daily performances" },
-        { id:5, name:"Rooftop Garden",           emoji:"🌿", color:"#22c55e", x:78, y:75,  icon:"assets/Hagia-Sophia.png", desc:"Urban oasis with lush greenery" },
-        { id:6, name:"Fitness & Wellness Center",emoji:"🏋️", color:"#ff8c00", x:50, y:82,  icon:"assets/unnamed.png",      desc:"State-of-the-art fitness equipment" },
-        { id:7, name:"Sky Lounge & Bar",         emoji:"🍸", color:"#ff3d8a", x:22, y:75,  icon:"assets/Hagia-Sophia.png", desc:"Signature cocktails and nightlife" },
-        { id:8, name:"Conference & Events Hall", emoji:"🤝", color:"#3b82f6", x:10, y:50,  icon:"assets/unnamed.png",      desc:"Premium spaces for corporate events" }
+        { id:1, name:"Chilandar", icon:"assets/New-data/Icons/Chilandar icon.png", color:"#ff3d8a", x:20, y:25, desc:"Explore the historic Chilandar monastery" },
+        { id:2, name:"Holy Sepulchre", icon:"assets/New-data/Icons/Church of the Holy Sepulchre icon copy.png", color:"#00e5ff", x:42, y:15, desc:"Visit the Church of the Holy Sepulchre" },
+        { id:3, name:"Hagia Sophia (Iznik)", icon:"assets/New-data/Icons/Hagia Sophia in Iznik icon copy.png", color:"#ffc107", x:75, y:15, desc:"Discover the Hagia Sophia in Iznik" },
+        { id:4, name:"Hagios Demetrios", icon:"assets/New-data/Icons/Hagios Demetrios icon copy.png", color:"#a855f7", x:88, y:45, desc:"Explore the Hagios Demetrios basilica" },
+        { id:5, name:"Holy Forty Martyrs", icon:"assets/New-data/Icons/Holy Forty Martyrs icon copy.png", color:"#22c55e", x:78, y:75, desc:"Visit the Holy Forty Martyrs church" },
+        { id:6, name:"Mar Saba", icon:"assets/New-data/Icons/Mar Saba icon.png", color:"#ff8c00", x:50, y:82, desc:"Discover the Mar Saba monastery" },
+        { id:7, name:"Trip-01", icon:"assets/New-data/Icons/Trip-01.png", color:"#ff3d8a", x:22, y:75, desc:"An amazing journey through history" },
+        { id:8, name:"Trip-02", icon:"assets/New-data/Icons/Trip-02.png", color:"#3b82f6", x:10, y:50, desc:"Explore the hidden gems of the region" }
     ];
 
     const videoElements = {};
+    let globalLocationVideo = null;
     let activeLocationVideo = null;
 
     // ─── PARTICLES ───
@@ -137,26 +140,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── INIT APP ───
     function initApp() {
-        initParticles('particles-canvas');
         hotspotsLayer.innerHTML = '';
-        hotspots.forEach((spot, index) => {
+        // Sort hotspots by Y coordinate descending (bottom to top)
+        const sortedHotspots = [...hotspots].sort((a, b) => b.y - a.y);
+        
+        sortedHotspots.forEach((spot, index) => {
             const el = document.createElement('div');
             el.className = 'hotspot';
             el.style.left = `${spot.x}%`;
             el.style.top = `${spot.y}%`;
-            el.style.animationDelay = `${index * 0.2}s`;
+            el.style.animationDelay = `${index * 0.15}s`; // Staggered reveal
 
             el.innerHTML = `
                 <div class="node-core">
-                    <div class="node-ring-outer" style="border-color:${spot.color}"></div>
-                    <div class="node-ring-outer node-ring-outer-2" style="border-color:${spot.color}"></div>
-                    <div class="node-core-bg" style="border-color:${spot.color}"></div>
-                    <div class="node-glow" style="background:${spot.color}"></div>
-                    <div class="node-core-inner" style="background:radial-gradient(circle, ${spot.color}33 0%, ${spot.color}11 100%)">
-                        <span class="node-emoji">${spot.emoji}</span>
+                    <div class="node-glow" style="background:${spot.color}; opacity: 0.15; filter: blur(40px); position: absolute; inset: -10px; border-radius: 50%; z-index: 1;"></div>
+                    <div class="node-core-inner">
+                        <img src="${spot.icon}" alt="${spot.name}">
                     </div>
                 </div>
-                <div class="node-label" style="border-color:${spot.color}66">
+                <div class="node-label" style="background: rgba(0,0,0,0.5); border: 1px solid ${spot.color}33">
                     <span>${spot.name}</span>
                 </div>
             `;
@@ -164,29 +166,29 @@ document.addEventListener('DOMContentLoaded', () => {
             el.addEventListener('mousedown', e => handleHotspotTap(e, spot));
             el.addEventListener('touchstart', e => handleHotspotTap(e, spot));
             hotspotsLayer.appendChild(el);
-
-            // Preload video
-            const vid = document.createElement('video');
-            const videoPath = `assets/videos/poi-${index + 1}.mp4`;
-            vid.src = videoPath;
-            vid.preload = 'auto'; vid.muted = true; vid.playsInline = true; vid.loop = false;
-            
-            vid.onloadeddata = () => console.log(`✅ Video loaded: ${videoPath}`);
-            vid.onended = () => {
-                if (currentScreen === 'video') switchScreen('map');
-            };
-            vid.onerror = (e) => {
-                console.error(`❌ Video load failed: ${videoPath}`, e);
-                // Try fallback to root videos folder if assets/videos fails
-                if (!vid.dataset.triedFallback) {
-                    vid.dataset.triedFallback = 'true';
-                    vid.src = `videos/location-${index + 1}.mp4`;
-                }
-            };
-            videoContainer.appendChild(vid);
-            videoElements[spot.id] = vid;
         });
+
+        // Setup single global video for all locations
+        const vid = document.createElement('video');
+        const videoPath = `assets/New-data/Beginning video.mp4`;
+        vid.src = videoPath;
+        vid.preload = 'auto'; vid.muted = true; vid.playsInline = true; vid.loop = false;
+        
+        vid.onloadeddata = () => console.log(`✅ Global Video loaded: ${videoPath}`);
+        vid.onended = () => {
+            if (currentScreen === 'video') switchScreen('map');
+        };
+        videoContainer.appendChild(vid);
+        globalLocationVideo = vid;
+
+        // Intro Video handling
+        if (introVideo) {
+            introVideo.onended = () => {
+                if (currentScreen === 'intro') switchScreen('map');
+            };
+        }
     }
+
 
     // ─── RIPPLE ───
     function createRipple(e) {
@@ -206,17 +208,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── SCREEN TRANSITIONS ───
     function switchScreen(to) {
-        [idleScreen, welcomeScreen, mapScreen, videoScreen].forEach(s => {
-            s.classList.remove('active'); s.classList.add('hidden');
+        [idleScreen, mapScreen, videoScreen, introScreen].forEach(s => {
+            if (s) { s.classList.remove('active'); s.classList.add('hidden'); }
         });
 
         if (to === 'idle') {
             idleScreen.classList.remove('hidden'); idleScreen.classList.add('active');
+            const idleVideo = document.getElementById('idle-video');
+            if (idleVideo) {
+                idleVideo.currentTime = 0;
+                idleVideo.play().catch(()=>{});
+            }
             if (activeLocationVideo) activeLocationVideo.pause();
+            if (introVideo) { introVideo.pause(); introVideo.currentTime = 0; }
             stopTimer();
-        } else if (to === 'welcome') {
-            welcomeScreen.classList.remove('hidden'); welcomeScreen.classList.add('active');
-            initParticles('welcome-particles');
+        } else if (to === 'intro') {
+            if (introScreen) {
+                introScreen.classList.remove('hidden'); introScreen.classList.add('active');
+                if (introVideo) { introVideo.currentTime = 0; introVideo.play().catch(()=>{}); }
+            }
+            resetTimer();
         } else if (to === 'map') {
             mapScreen.classList.remove('hidden'); mapScreen.classList.add('active');
             if (activeLocationVideo) {
@@ -241,8 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── INTERACTIONS ───
     function wakeUp() {
         if (currentScreen !== 'idle') return;
-        switchScreen('welcome');
-        setTimeout(() => switchScreen('map'), 2000);
+        switchScreen('intro');
     }
     idleScreen.addEventListener('mousedown', wakeUp);
     idleScreen.addEventListener('touchstart', wakeUp);
@@ -252,13 +262,15 @@ document.addEventListener('DOMContentLoaded', () => {
         createRipple(e);
         videoTitle.textContent = spot.name;
         videoDesc.textContent = spot.desc;
-        videoEmoji.textContent = spot.emoji;
+        if (videoIcon) videoIcon.src = spot.icon;
         
         // Dynamic UI Coloring based on the location
         const emojiContainer = document.querySelector('.video-emoji-container');
         if (emojiContainer) {
-            emojiContainer.style.background = spot.color;
-            emojiContainer.style.boxShadow = `0 0 100px ${spot.color}B3`; // ~70% opacity glow
+            emojiContainer.style.background = 'rgba(255, 255, 255, 0.2)';
+            emojiContainer.style.boxShadow = `0 0 100px ${spot.color}80`;
+            emojiContainer.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+            emojiContainer.style.backdropFilter = 'blur(15px)';
         }
         
         if (videoProgressBar) {
@@ -270,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeLocationVideo.classList.remove('active-video');
             activeLocationVideo.pause();
         }
-        activeLocationVideo = videoElements[spot.id];
+        activeLocationVideo = globalLocationVideo;
         if (activeLocationVideo) {
             activeLocationVideo.classList.add('active-video');
             activeLocationVideo.currentTime = 0;
@@ -321,7 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('contextmenu', e => e.preventDefault());
     window.addEventListener('resize', () => {
-        const c1 = document.getElementById('particles-canvas');
-        if (c1) { c1.width = window.innerWidth; c1.height = window.innerHeight; }
+        // const c1 = document.getElementById('particles-canvas');
+        // if (c1) { c1.width = window.innerWidth; c1.height = window.innerHeight; }
+        const c2 = document.getElementById('welcome-particles');
+        if (c2) { c2.width = window.innerWidth; c2.height = window.innerHeight; }
     });
 });

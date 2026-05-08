@@ -11,41 +11,18 @@
 
     <!-- IDLE SCREEN -->
     <div id="idle-screen" class="screen active">
+        <video id="idle-video" src="assets/New-data/IDLE SCREN/Idle Screen.mp4" autoplay muted loop playsinline></video>
         <div class="idle-overlay"></div>
-        <canvas id="particles-canvas"></canvas>
-        <div class="idle-rings">
-            <div class="ring ring-1"></div>
-            <div class="ring ring-2"></div>
-            <div class="ring ring-3"></div>
-        </div>
-        <div class="idle-content">
-            <h1 class="hero-title">EXPLORE</h1>
-            <p class="hero-sub">Touch Anywhere to Begin</p>
-        </div>
-        <div class="idle-border"></div>
     </div>
 
-    <!-- WELCOME SCREEN -->
-    <div id="welcome-screen" class="screen hidden">
-        <canvas id="welcome-particles"></canvas>
-        <div class="welcome-content">
-            <div class="welcome-icon">
-                <img src="assets/Hagia-Sophia.png" alt="Museum" class="welcome-logo">
-            </div>
-            <h1 class="welcome-title">Discover Your Destination</h1>
-            <p class="welcome-subtitle">An Immersive Journey Awaits</p>
-            <div class="welcome-loader"><div class="loader-bar"></div></div>
-        </div>
+    <!-- INTRO SCREEN -->
+    <div id="intro-screen" class="screen hidden">
+        <video id="intro-video" src="assets/New-data/Beginning video.mp4" playsinline muted></video>
     </div>
 
     <!-- MAP SCREEN -->
     <div id="map-screen" class="screen hidden">
-        <div class="map-bg-layer">
-            <div class="blob blob-1"></div>
-            <div class="blob blob-2"></div>
-            <div class="blob blob-3"></div>
-            <div class="animated-grid"></div>
-        </div>
+        <div class="map-bg-layer"></div>
         <canvas id="map-lines-canvas"></canvas>
         <div class="hotspots-layer" id="hotspots-layer"></div>
     </div>
@@ -60,7 +37,7 @@
             
             <div class="video-info-center">
                 <div class="video-emoji-container">
-                    <div class="video-emoji" id="video-emoji">🏛️</div>
+                    <img class="video-icon" id="video-icon" src="" alt="icon">
                 </div>
                 <h2 id="video-title">Location Name</h2>
                 <p id="video-desc">Explore this amazing destination</p>

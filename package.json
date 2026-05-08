@@ -1,0 +1,12 @@
+{
+  "name": "kiosk-web",
+  "version": "1.0.0",
+  "description": "Touchscreen kiosk application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve -l 3000 ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
