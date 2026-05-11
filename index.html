@@ -2,22 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Explore Kiosk Experience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Explore the immersive 4K kiosk experience. A cinematic journey through historic locations.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Explore Kiosk Experience | 4K Cinematic Journey</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false;" style="background: #000;">
 
     <!-- IDLE SCREEN -->
     <div id="idle-screen" class="screen active">
-        <video id="idle-video" src="assets/New-data/IDLE SCREN/Idle Screen.mp4" autoplay muted loop playsinline></video>
+        <video id="idle-video" src="assets/videos/attract.mp4" autoplay muted loop playsinline></video>
         <div class="idle-overlay"></div>
     </div>
-
+    
     <!-- INTRO SCREEN -->
     <div id="intro-screen" class="screen hidden">
-        <video id="intro-video" src="assets/New-data/Beginning video.mp4" playsinline muted></video>
+        <video id="intro-video" src="assets/videos/intro.mp4" playsinline muted></video>
     </div>
 
     <!-- MAP SCREEN -->

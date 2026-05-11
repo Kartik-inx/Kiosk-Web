@@ -21,14 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Each hotspot: unique color, icon, position
     const hotspots = [
-        { id:1, name:"Chilandar", icon:"assets/New-data/Icons/Chilandar icon.png", color:"#ff3d8a", x:20, y:25, desc:"Explore the historic Chilandar monastery" },
-        { id:2, name:"Holy Sepulchre", icon:"assets/New-data/Icons/Church of the Holy Sepulchre icon copy.png", color:"#00e5ff", x:42, y:15, desc:"Visit the Church of the Holy Sepulchre" },
-        { id:3, name:"Hagia Sophia (Iznik)", icon:"assets/New-data/Icons/Hagia Sophia in Iznik icon copy.png", color:"#ffc107", x:75, y:15, desc:"Discover the Hagia Sophia in Iznik" },
-        { id:4, name:"Hagios Demetrios", icon:"assets/New-data/Icons/Hagios Demetrios icon copy.png", color:"#a855f7", x:88, y:45, desc:"Explore the Hagios Demetrios basilica" },
-        { id:5, name:"Holy Forty Martyrs", icon:"assets/New-data/Icons/Holy Forty Martyrs icon copy.png", color:"#22c55e", x:78, y:75, desc:"Visit the Holy Forty Martyrs church" },
-        { id:6, name:"Mar Saba", icon:"assets/New-data/Icons/Mar Saba icon.png", color:"#ff8c00", x:50, y:82, desc:"Discover the Mar Saba monastery" },
-        { id:7, name:"Trip-01", icon:"assets/New-data/Icons/Trip-01.png", color:"#ff3d8a", x:22, y:75, desc:"An amazing journey through history" },
-        { id:8, name:"Trip-02", icon:"assets/New-data/Icons/Trip-02.png", color:"#3b82f6", x:10, y:50, desc:"Explore the hidden gems of the region" }
+        { id:1, name:"Chilandar", icon:"assets/New-data/Icons/Chilandar icon.png", color:"#ff3d8a", x:20, y:25, video:"poi-1.mp4", desc:"Explore the historic Chilandar monastery" },
+        { id:2, name:"Holy Sepulchre", icon:"assets/New-data/Icons/Church of the Holy Sepulchre icon copy.png", color:"#00e5ff", x:42, y:15, video:"poi-2.mp4", desc:"Visit the Church of the Holy Sepulchre" },
+        { id:3, name:"Hagia Sophia (Iznik)", icon:"assets/New-data/Icons/Hagia Sophia in Iznik icon copy.png", color:"#ffc107", x:75, y:15, video:"poi-3.mp4", desc:"Discover the Hagia Sophia in Iznik" },
+        { id:4, name:"Hagios Demetrios", icon:"assets/New-data/Icons/Hagios Demetrios icon copy.png", color:"#a855f7", x:88, y:45, video:"poi-4.mp4", desc:"Explore the Hagios Demetrios basilica" },
+        { id:5, name:"Holy Forty Martyrs", icon:"assets/New-data/Icons/Holy Forty Martyrs icon copy.png", color:"#22c55e", x:78, y:75, video:"poi-5.mp4", desc:"Visit the Holy Forty Martyrs church" },
+        { id:6, name:"Mar Saba", icon:"assets/New-data/Icons/Mar Saba icon.png", color:"#ff8c00", x:50, y:82, video:"poi-6.mp4", desc:"Discover the Mar Saba monastery" },
+        { id:7, name:"Trip-01", icon:"assets/New-data/Icons/Trip-01.png", color:"#ff3d8a", x:22, y:75, video:"poi-7.mp4", desc:"An amazing journey through history" },
+        { id:8, name:"Trip-02", icon:"assets/New-data/Icons/Trip-02.png", color:"#3b82f6", x:10, y:50, video:"poi-8.mp4", desc:"Explore the hidden gems of the region" }
     ];
 
     const videoElements = {};
@@ -40,8 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
         const particles = [];
         for (let i = 0; i < 100; i++) {
             particles.push({
@@ -79,8 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById('map-lines-canvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
         
         if (mapAnimationId) cancelAnimationFrame(mapAnimationId);
 
@@ -168,18 +176,15 @@ document.addEventListener('DOMContentLoaded', () => {
             hotspotsLayer.appendChild(el);
         });
 
-        // Setup single global video for all locations
-        const vid = document.createElement('video');
-        const videoPath = `assets/New-data/Beginning video.mp4`;
-        vid.src = videoPath;
-        vid.preload = 'auto'; vid.muted = true; vid.playsInline = true; vid.loop = false;
-        
-        vid.onloadeddata = () => console.log(`✅ Global Video loaded: ${videoPath}`);
-        vid.onended = () => {
-            if (currentScreen === 'video') switchScreen('map');
-        };
-        videoContainer.appendChild(vid);
-        globalLocationVideo = vid;
+        // Preload POI videos
+        hotspots.forEach(spot => {
+            const vid = document.createElement('video');
+            vid.src = `assets/videos/${spot.video}`;
+            vid.preload = 'auto'; vid.muted = true; vid.playsInline = true;
+            vid.onended = () => { if (currentScreen === 'video') switchScreen('map'); };
+            videoElements[spot.id] = vid;
+            videoContainer.appendChild(vid);
+        });
 
         // Intro Video handling
         if (introVideo) {
@@ -197,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (x === undefined) return;
         const r = document.createElement('div');
         r.className = 'touch-ripple';
-        const s = 150; // Increased base size
+        const s = Math.max(window.innerWidth, window.innerHeight) * 0.1; // 10% of screen size for ripple
         r.style.cssText = `width:${s}px;height:${s}px;left:${x-s/2}px;top:${y-s/2}px`;
         document.body.appendChild(r);
         setTimeout(() => r.remove(), 1200); // Matches the 1.2s CSS animation
@@ -282,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeLocationVideo.classList.remove('active-video');
             activeLocationVideo.pause();
         }
-        activeLocationVideo = globalLocationVideo;
+        activeLocationVideo = videoElements[spot.id];
         if (activeLocationVideo) {
             activeLocationVideo.classList.add('active-video');
             activeLocationVideo.currentTime = 0;
